@@ -42,7 +42,9 @@ jobs:
           DATABASE_URL: postgresql://user:password@localhost:5432/dbname?schema=public
 
       - name: Comment PR with coverage
+        if: github.event_name == 'pull_request'
         uses: romeovs/lcov-reporter-action@v0.3.1
         with:
           lcov-file: ./code/coverage/lcov.info
           delete-old-comments: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
