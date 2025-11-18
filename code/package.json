@@ -5,7 +5,7 @@
   "main": "src/server.js",
   "type": "module",
   "scripts": {
-    "dev": "export $(grep -v '^#' .env | xargs) && node src/server.js",
+    "dev": "export $(grep -v '^#' .env | xargs) && nodemon src/server.js",
     "start": "export $(grep -v '^#' .env | xargs) && node src/server.js",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
@@ -40,19 +40,19 @@
   "dependencies": {
     "@auth/express": "^0.12.1",
     "@paralleldrive/cuid2": "^3.0.4",
-    "@prisma/client": "^5.22.0",
+    "@prisma/client": "^6.19.0",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "csv-parser": "^3.2.0",
-    "dotenv": "^16.6.1",
-    "ejs": "^3.1.9",
-    "express": "^4.21.2",
-    "express-rate-limit": "^7.5.1",
+    "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.2.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
-    "zod": "^3.25.76"
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
@@ -65,7 +65,7 @@
     "jsdom": "^25.0.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.6.2",
-    "prisma": "^5.22.0",
+    "prisma": "^6.19.0",
     "supertest": "^7.1.4"
   },
   "engines": {

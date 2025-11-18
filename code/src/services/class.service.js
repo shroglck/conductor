@@ -1,9 +1,7 @@
 // Service functions for Class-related database operations
 // code/src/services/class.service.js
 
-import {
-  prisma
-} from "../lib/prisma.js";
+import { prisma } from "../lib/prisma.js";
 
 /**
  * Generate a short, human-friendly class invite code.
@@ -11,10 +9,11 @@ import {
  */
 function generateInviteCode() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  return Array.from({
-      length: 8
-    }, () =>
-    chars[Math.floor(Math.random() * chars.length)]
+  return Array.from(
+    {
+      length: 8,
+    },
+    () => chars[Math.floor(Math.random() * chars.length)],
   ).join("");
 }
 
@@ -25,16 +24,13 @@ function generateInviteCode() {
  * @param {string} params.quarter Academic quarter (e.g., "FA24")
  * @returns {Promise<Object>} Created class record
  */
-export async function createClass({
-  name,
-  quarter
-}) {
+export async function createClass({ name, quarter }) {
   return prisma.class.create({
     data: {
       name,
       quarter,
-      inviteCode: generateInviteCode()
-    }
+      inviteCode: generateInviteCode(),
+    },
   });
 }
 
@@ -46,29 +42,29 @@ export async function createClass({
 export async function getClassById(id) {
   return prisma.class.findUnique({
     where: {
-      id
+      id,
     },
     include: {
       members: {
         include: {
-          user: true
-        }
+          user: true,
+        },
       },
       groups: {
         include: {
           members: {
             include: {
-              user: true
-            }
+              user: true,
+            },
           },
           supervisors: {
             include: {
-              user: true
-            }
-          }
-        }
-      }
-    }
+              user: true,
+            },
+          },
+        },
+      },
+    },
   });
 }
 
@@ -80,8 +76,8 @@ export async function getClassById(id) {
 export async function getClassByInviteCode(inviteCode) {
   return prisma.class.findUnique({
     where: {
-      inviteCode
-    }
+      inviteCode,
+    },
   });
 }
 
@@ -94,9 +90,9 @@ export async function getClassByInviteCode(inviteCode) {
 export async function updateClass(id, data) {
   return prisma.class.update({
     where: {
-      id
+      id,
     },
-    data
+    data,
   });
 }
 
@@ -109,20 +105,20 @@ export async function updateClass(id, data) {
 export async function getClassesByUserId(userId) {
   const classRoles = await prisma.classRole.findMany({
     where: {
-      userId
+      userId,
     },
     include: {
-      class: true
-    }
+      class: true,
+    },
   });
 
-  return classRoles.map(cr => ({
+  return classRoles.map((cr) => ({
     id: cr.class.id,
     name: cr.class.name,
     quarter: cr.class.quarter,
     inviteCode: cr.class.inviteCode,
     createdAt: cr.class.createdAt,
-    role: cr.role
+    role: cr.role,
   }));
 }
 
@@ -135,7 +131,7 @@ export async function getClassesByUserId(userId) {
 export async function deleteClass(id) {
   return prisma.class.delete({
     where: {
-      id
-    }
+      id,
+    },
   });
 }
