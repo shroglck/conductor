@@ -2,8 +2,7 @@ import { defineConfig, env } from "@prisma/config";
 import path from "node:path";
 
 export default defineConfig({
-  // Use the directory instead of a single file
-  schema: path.join("prisma", "schema"),
+  schema: path.join("prisma", "schema.prisma"),
   migrations: {
     path: "prisma/migrations",
   },
