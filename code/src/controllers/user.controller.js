@@ -93,19 +93,16 @@ export const renderUserProfilePage = asyncHandler(async (req, res) => {
  * Update User Profile
  */
 export const updateUserProfile = asyncHandler(async (req, res) => {
-  // eslint-disable-next-line no-unused-vars
   const userId = req.user.id;
   const { name, pronouns, bio, github } = req.body;
 
-  // TODO: Backend integration - update user in database
-  // For now, just return success and re-render profile
-  const updatedUser = {
-    ...req.user,
+  const updateData = {
     name: name || req.user.name,
     pronouns,
     bio,
     github,
   };
+  const updatedUser = await userService.updateUser(userId, updateData);
 
   const content = renderProfilePage(updatedUser, []);
   const isHtmx = !!req.headers["hx-request"];
