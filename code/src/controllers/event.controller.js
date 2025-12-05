@@ -54,7 +54,7 @@ function mapUITypeToDB(uiType) {
  * @returns {Date} Date object representing the PST time (stored as UTC)
  */
 function convertToPST(dateStr, timeStr) {
-  // Parse date and time components
+  // Parse date components
   const [year, month, day] = dateStr.split("-").map(Number);
 
   // Create a date string in the format: YYYY-MM-DDTHH:MM:00
