@@ -3,6 +3,12 @@ import { prisma } from "../../src/lib/prisma.js";
 
 export async function resetDatabase() {
   // Delete lowest-level dependent relations first
+  await prisma.attendanceRecord.deleteMany();
+  await prisma.attendancePoll.deleteMany();
+  await prisma.courseSession.deleteMany();
+  await prisma.event.deleteMany();
+  await prisma.activity.deleteMany();
+  await prisma.activityCategory.deleteMany();
   await prisma.groupSupervisor.deleteMany();
   await prisma.groupRole.deleteMany();
   await prisma.group.deleteMany();
