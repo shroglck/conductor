@@ -735,6 +735,16 @@ defineFeature(feature, (test) => {
           }
         }
       });
+
+      // DYNAMIC DATE FIX:
+      // If the test provides a date (like 2025-12-05), we overwrite it with a dynamic future date
+      // to avoid validation errors if today > test date.
+      // We calculate "tomorrow" dynamically.
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+      context.formData.date = tomorrowStr;
     });
 
     when(/^I submit the create event form$/, async () => {

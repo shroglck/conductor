@@ -9,17 +9,17 @@ Simulated using `autocannon` hitting `GET /journal` and `POST /journal` for 10 s
 - **Conclusion**: The application handles high load by rate-limiting or timing out rather than crashing, but production deployment would require horizontal scaling (clusters/instances) and connection pooling optimization to handle 1000 concurrent active users.
 
 ## 2. RAIL Model Testing
-Simulated using Playwright.
+Simulated using Playwright with 10 user journeys (Login -> Dashboard -> Journal -> Create Entry -> Classes).
 
 ### Response (Input Latency)
 - **Metric**: Time from clicking "Post Entry" to the new entry appearing in the DOM.
-- **Result**: ~472ms
+- **Result**: ~499ms
 - **Analysis**: Exceeds the <100ms goal. This is expected for a server-side rendered interaction involving a database write.
 - **Recommendation**: Optimistic UI updates (adding the card immediately via JS before server confirmation) could bring this under 100ms.
 
 ### Animation (Smoothness)
 - **Metric**: Cumulative Layout Shift (CLS).
-- **Result**: 0.008
+- **Result**: ~0.008
 - **Analysis**: Excellent score (Target < 0.1). The interface is stable with minimal shifting.
 
 ### Idle
@@ -27,5 +27,8 @@ Simulated using Playwright.
 
 ### Load (Initial Load)
 - **Metric**: Navigation to `domInteractive`.
-- **Result**: ~624ms
-- **Analysis**: Excellent score (Target < 1000ms). The page is lightweight and renders quickly.
+- **Result**:
+    - **Dashboard**: ~470ms
+    - **Journal Page**: ~160ms
+    - **Classes Page**: ~123ms
+- **Analysis**: Excellent score (Target < 1000ms). The pages are lightweight and render quickly.
