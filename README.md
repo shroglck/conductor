@@ -1,10 +1,10 @@
 # MonkeySchool
 
 ```
- __  __                    _               _  _    ___            _                         _   
-|  \/  |   ___    _ _     | |__    ___    | || |  / __|    __    | |_      ___     ___     | |  
-| |\/| |  / _ \  | ' \    | / /   / -_)    \_, |  \__ \   / _|   | ' \    / _ \   / _ \    | |  
-|_|__|_|  \___/  |_||_|   |_\_\   \___|   _|__/   |___/   \__|_  |_||_|   \___/   \___/   _|_|_ 
+ __  __                    _               _  _    ___            _                         _
+|  \/  |   ___    _ _     | |__    ___    | || |  / __|    __    | |_      ___     ___     | |
+| |\/| |  / _ \  | ' \    | / /   / -_)    \_, |  \__ \   / _|   | ' \    / _ \   / _ \    | |
+|_|__|_|  \___/  |_||_|   |_\_\   \___|   _|__/   |___/   \__|_  |_||_|   \___/   \___/   _|_|_
 _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_| """"|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|
 "`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'
 ```
@@ -124,6 +124,31 @@ Run all tests with coverage:
 npm test
 ```
 
+### Performance Testing
+
+The project includes scripts for RAIL (Response, Animation, Idle, Load) and Stress testing.
+
+#### Stress Testing
+Simulates 1000 concurrent connections to the journal endpoint using `autocannon`.
+
+```bash
+# Ensure server is running in test mode first
+export $(grep -v '^#' .env.test | xargs) && node src/server.js
+
+# In another terminal:
+npm run test:stress
+```
+
+#### RAIL Testing
+Uses Playwright to measure Navigation Timing and Input Latency for a simulated user journey.
+
+```bash
+# Ensure server is running
+# In another terminal:
+cd code
+python3 scripts/rail-test-suite.py
+```
+
 ## Project Structure
 
 ```
@@ -143,6 +168,7 @@ code/
 	tests/                  # Test files
 	features/               # BDD Gherkin feature files
 	prisma/                 # Prisma schema and migrations
+	scripts/                # Testing and utility scripts
 	package.json
 ```
 
