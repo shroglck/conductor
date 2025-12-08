@@ -14,7 +14,6 @@ A production-grade web application built with Express, Prisma, and HTMX, focusin
 ## Features
 
 - **Modern Stack**: Express.js with HTMX for dynamic, hypermedia-driven interactions
-- **Journal**: Personal work log and reflection tool with a Notion-like UI
 - **Database**: PostgreSQL with Prisma ORM for type-safe database access
 - **Clean Architecture**: Separation of concerns with controllers, services, and validators
 - **Security**: Helmet, CORS, rate limiting, and environment-based configuration

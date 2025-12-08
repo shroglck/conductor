@@ -25,7 +25,9 @@ model User {
   attendanceRecords AttendanceRecord[] @relation("AttendanceRecords")    
   
   events Event[] @relation("EventCreator") // Events created by this user
-  journalEntries JournalEntry[] // NEW
+  availability Availability[] @relation("UserAvailability") // User's weekly availability
+  pulseEntries PulseEntry[] @relation("UserPulseEntries") // User's pulse check entries
+  journalEntries JournalEntry[] @relation("UserJournalEntries") // User's journal entries
 
   @@index([name])
   @@index([email])

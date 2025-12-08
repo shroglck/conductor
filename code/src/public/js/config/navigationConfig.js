@@ -33,7 +33,7 @@ export const navigationConfig = {
       icon: "user",
       subMenu: [
         { name: "View Profile", path: "/users/profile" },
-        { name: "My Journal", path: "/journal" },
+        { name: "Journal", path: "/journal" },
       ],
     },
   ],

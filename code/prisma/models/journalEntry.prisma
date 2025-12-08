@@ -1,12 +1,19 @@
 model JournalEntry {
   id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
+  user      User     @relation("UserJournalEntries", fields: [userId], references: [id], onDelete: Cascade)
+
+  entryType String   // 'WORK_LOG' or 'EMOTIONAL_REFLECTION'
   title     String?
-  workLog   String
-  reflection String
+  content   String   @db.Text
+  mood      String?  // Optional mood indicator (e.g. for reflections or quick logs)
+
+  isEdited  Boolean  @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([userId])
+  @@index([createdAt])
   @@map("journal_entries")
 }

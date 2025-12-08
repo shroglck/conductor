@@ -1,125 +1,162 @@
-import * as journalService from "../services/journal.service.js";
+/**
+ * ============================================================================
+ * Journal Controller
+ * ============================================================================
+ *
+ * File: code/src/controllers/journal.controller.js
+ *
+ * This controller handles the Personal Journal feature.
+ *
+ * ============================================================================
+ */
+
+import { prisma } from "../lib/prisma.js";
 import { asyncHandler } from "../utils/async-handler.js";
-import { NotFoundError, ForbiddenError } from "../utils/api-error.js";
-import { createBaseLayout } from "../utils/html-templates.js";
 import {
-  createJournalPage,
-  createJournalEntryView,
-  createJournalEntryForm,
-  createJournalList,
-} from "../utils/components/journal-page.js";
+    createJournalPage,
+    createJournalList,
+    createJournalEntryCard
+} from "../utils/htmx-templates/journal-templates.js";
+import { createBaseLayout, createErrorMessage } from "../utils/html-templates.js";
 
 /**
- * Render the main journal page with list
+ * Get Journal Page
+ * Route: GET /journal
  */
-export const renderJournalPage = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
-  const entries = await journalService.getEntriesByUser(userId);
-  const content = createJournalPage(entries);
+export const getJournalPage = asyncHandler(async (req, res) => {
+    const user = req.user;
+    const { type } = req.query;
 
-  if (req.headers["hx-request"]) {
-    res.send(content);
-  } else {
-    res.send(createBaseLayout("My Journal", content));
-  }
+    // Filter by type if provided (WORK_LOG, EMOTIONAL_REFLECTION)
+    const where = {
+        userId: user.id
+    };
+    if (type) {
+        where.entryType = type;
+    }
+
+    const entries = await prisma.journalEntry.findMany({
+        where,
+        orderBy: { createdAt: 'desc' }
+    });
+
+    const pageContent = createJournalPage(user, entries, type);
+
+    // Check if HTMX request (for filters or partial loads) - though main nav usually full load
+    // But filters might use HTMX.
+    if (req.headers["hx-request"]) {
+        // If it's a specific filter request targeting the list container
+        if (req.headers["hx-target"] === "journal-list-container") {
+            return res.send(createJournalList(entries));
+        }
+        // Otherwise return partial page content
+        return res.send(pageContent);
+    }
+
+    const fullHtml = createBaseLayout("Journal", pageContent, { user });
+    res.send(fullHtml);
 });
 
 /**
- * Render a single journal entry
+ * Create Journal Entry
+ * Route: POST /journal
  */
-export const renderEntryPage = asyncHandler(async (req, res) => {
-  const entry = await journalService.getEntryById(req.params.id);
-  if (!entry) throw new NotFoundError("Entry not found");
-  if (entry.userId !== req.user.id) throw new ForbiddenError("Access denied");
+export const createJournalEntry = asyncHandler(async (req, res) => {
+    const user = req.user;
+    const { entryType, content, title, mood } = req.body;
 
-  res.send(createJournalEntryView(entry));
+    if (!entryType || !content) {
+        return res.status(400).send(createErrorMessage("Entry type and content are required."));
+    }
+
+    const newEntry = await prisma.journalEntry.create({
+        data: {
+            userId: user.id,
+            entryType,
+            content,
+            title: title || null,
+            mood: mood || null,
+        }
+    });
+
+    // If request comes from dashboard modal (or other partial context), we might want to return a toast or updated list.
+    // If it comes from the journal page list, we want to prepend the new entry.
+
+    if (req.headers["hx-request"]) {
+        // If the request targets the journal list (from Journal Page), return the new card HTML.
+        // The frontend uses hx-target="#journal-list-container" and hx-swap="afterbegin".
+        if (req.headers["hx-target"] === "journal-list-container") {
+            return res.send(createJournalEntryCard(newEntry));
+        }
+
+        // If from Dashboard Modal (or other sources where we don't need the HTML back),
+        // we just return 200 OK. The frontend handles the UI (toast, close modal) via events.
+        return res.status(200).send("");
+    }
+
+    // Fallback redirect
+    res.redirect("/journal");
 });
 
 /**
- * Render the create/edit form
+ * Update Journal Entry
+ * Route: PUT /journal/:id
  */
-export const renderEditPage = asyncHandler(async (req, res) => {
-  if (req.params.id) {
-    // Edit mode
-    const entry = await journalService.getEntryById(req.params.id);
-    if (!entry) throw new NotFoundError("Entry not found");
-    if (entry.userId !== req.user.id) throw new ForbiddenError("Access denied");
-    res.send(createJournalEntryForm(entry));
-  } else {
-    // Create mode
-    res.send(createJournalEntryForm());
-  }
+export const updateJournalEntry = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const user = req.user;
+    const { content, title, mood } = req.body;
+
+    const entry = await prisma.journalEntry.findUnique({
+        where: { id }
+    });
+
+    if (!entry || entry.userId !== user.id) {
+        return res.status(404).send(createErrorMessage("Entry not found or unauthorized."));
+    }
+
+    const updateData = {
+        content,
+        title: title || null,
+        isEdited: true
+    };
+
+    if (mood !== undefined) {
+        updateData.mood = mood || null;
+    }
+
+    await prisma.journalEntry.update({
+        where: { id },
+        data: updateData
+    });
+
+    // Return updated card HTML so HTMX can replace the old one
+    const updatedEntry = await prisma.journalEntry.findUnique({ where: { id } });
+
+    res.set("HX-Trigger", "journalEntryUpdated");
+    res.send(createJournalEntryCard(updatedEntry));
 });
 
 /**
- * Create a new entry
+ * Delete Journal Entry
+ * Route: DELETE /journal/:id
  */
-export const createEntry = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
-  const entry = await journalService.createEntry(userId, req.body);
+export const deleteJournalEntry = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const user = req.user;
 
-  // Return the view for the new entry, and update the list via OOB swap if possible,
-  // or just redirect the whole page if not using OOB.
-  // For simplicity with HTMX, we can return the entry view and trigger a client event to refresh the list,
-  // or return a response that updates both targets.
-  // Since we are targeting #journal-content, we return the view.
-  // To update the sidebar list, we can use HX-Trigger-After-Swap or return OOB content.
+    const entry = await prisma.journalEntry.findUnique({
+        where: { id }
+    });
 
-  const entryHtml = createJournalEntryView(entry);
-  const entries = await journalService.getEntriesByUser(userId);
-  const listHtml = createJournalList(entries);
+    if (!entry || entry.userId !== user.id) {
+        return res.status(404).send(createErrorMessage("Entry not found or unauthorized."));
+    }
 
-  // Using OOB swap to update the list
-  res.send(`
-    ${entryHtml}
-    <div id="journal-list" hx-swap-oob="true">
-      ${listHtml}
-    </div>
-  `);
-});
+    await prisma.journalEntry.delete({
+        where: { id }
+    });
 
-/**
- * Update an entry
- */
-export const updateEntry = asyncHandler(async (req, res) => {
-  const existing = await journalService.getEntryById(req.params.id);
-  if (!existing) throw new NotFoundError("Entry not found");
-  if (existing.userId !== req.user.id) throw new ForbiddenError("Access denied");
-
-  const entry = await journalService.updateEntry(req.params.id, req.body);
-
-  const entryHtml = createJournalEntryView(entry);
-  const entries = await journalService.getEntriesByUser(req.user.id);
-  const listHtml = createJournalList(entries);
-
-  res.send(`
-    ${entryHtml}
-    <div id="journal-list" hx-swap-oob="true">
-      ${listHtml}
-    </div>
-  `);
-});
-
-/**
- * Delete an entry
- */
-export const deleteEntry = asyncHandler(async (req, res) => {
-  const existing = await journalService.getEntryById(req.params.id);
-  if (!existing) throw new NotFoundError("Entry not found");
-  if (existing.userId !== req.user.id) throw new ForbiddenError("Access denied");
-
-  await journalService.deleteEntry(req.params.id);
-
-  const entries = await journalService.getEntriesByUser(req.user.id);
-  const listHtml = createJournalList(entries);
-
-  // Clear content and update list
-  res.send(`
-    <div class="empty-state">
-      <p>Entry deleted.</p>
-    </div>
-    <div id="journal-list" hx-swap-oob="true">
-      ${listHtml}
-    </div>
-  `);
+    // Return empty string to remove element from DOM
+    res.send("");
 });

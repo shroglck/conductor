@@ -1,4 +1,4 @@
-import { defineConfig, env } from "@prisma/config";
+import { defineConfig, env } from "prisma/config";
 import path from "node:path";
 
 export default defineConfig({

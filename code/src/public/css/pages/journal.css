@@ -1,0 +1,296 @@
+/**
+ * Journal Page Styles
+ */
+
+/* Layout */
+.journal-layout {
+    max-width: 800px;
+    margin: 0 auto;
+    padding-bottom: 48px;
+}
+
+.journal-header {
+    margin-bottom: 24px;
+}
+
+.journal-header h1 {
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-main);
+    margin-bottom: 8px;
+}
+
+.journal-subtitle {
+    color: var(--color-text-muted);
+}
+
+/* Editor Card */
+.journal-editor-card {
+    background: var(--color-bg-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: 24px;
+    margin-bottom: 32px;
+    transition: var(--transition-smooth);
+}
+
+.journal-editor-card:focus-within {
+    box-shadow: var(--shadow-float);
+    transform: translateY(-2px);
+}
+
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.type-selector {
+    display: flex;
+    gap: 12px;
+}
+
+.type-option input {
+    display: none;
+}
+
+.type-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    background: var(--color-brand-light);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    border: 1px solid transparent;
+}
+
+.type-option input:checked + .type-pill {
+    background: var(--color-brand-deep);
+    color: var(--color-text-inverse);
+    border-color: var(--color-brand-deep);
+}
+
+/* Editor Inputs */
+.editor-title-input {
+    width: 100%;
+    border: none;
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-main);
+    padding: 8px 0;
+    margin-bottom: 8px;
+    background: transparent;
+}
+
+.editor-title-input:focus {
+    outline: none;
+}
+
+.editor-content-input {
+    width: 100%;
+    border: none;
+    resize: vertical;
+    min-height: 100px;
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    color: var(--color-text-main);
+    background: transparent;
+    padding: 8px 0;
+}
+
+.editor-content-input:focus {
+    outline: none;
+}
+
+.editor-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: var(--border-subtle);
+}
+
+/* Feed & Filters */
+.feed-filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.filter-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    font-weight: var(--weight-medium);
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    transition: var(--transition-fast);
+}
+
+.filter-btn:hover {
+    background: var(--color-brand-light);
+    color: var(--color-brand-deep);
+}
+
+.filter-btn.active {
+    background: var(--color-brand-light);
+    color: var(--color-brand-deep);
+    font-weight: var(--weight-bold);
+}
+
+/* Journal Entry Card */
+.journal-card {
+    background: var(--color-bg-surface);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: var(--transition-fast);
+}
+
+.journal-card:hover {
+    border-color: rgba(14, 83, 74, 0.2);
+    box-shadow: var(--shadow-sm);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.entry-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.entry-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.type-work {
+    background: #E0F2FE;
+    color: #0284C7;
+}
+
+.type-reflection {
+    background: #FAE8FF;
+    color: #A21CAF;
+}
+
+.entry-date {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+}
+
+.edited-badge {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
+.mood-badge {
+    background: var(--color-brand-light);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+}
+
+.card-actions {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.journal-card:hover .card-actions,
+.journal-card:focus-within .card-actions {
+    opacity: 1;
+}
+
+.btn-icon-sm {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-icon-sm:hover {
+    background: var(--color-brand-light);
+    color: var(--color-brand-deep);
+}
+
+.btn-icon-sm.danger:hover {
+    background: #FEE2E2;
+    color: #EF4444;
+}
+
+.entry-title {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    margin-bottom: 8px;
+    color: var(--color-text-main);
+}
+
+.entry-body {
+    font-size: var(--text-base);
+    line-height: 1.6;
+    color: var(--color-text-main);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 48px;
+    color: var(--color-text-muted);
+    background: rgba(255,255,255,0.5);
+    border-radius: var(--radius-lg);
+    border: 2px dashed rgba(14, 83, 74, 0.1);
+}
+
+.empty-state i {
+    font-size: 32px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .editor-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .card-actions {
+        opacity: 1; /* Always show on mobile */
+    }
+}
