@@ -3,4 +3,5 @@ coverage
 .env.test
 .env.backup
 node_modules
-package-lock.json
+test-results/
+tests/performance/*_output.txt
