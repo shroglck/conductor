@@ -1,6 +1,6 @@
 import autocannon from 'autocannon';
 
-const targetUrl = 'http://monkeyschool.indresh.me/';
+const targetUrl = process.env.PERF_TEST_URL || 'https://monkeyschool.indresh.me/'; // Default to HTTPS
 const authToken = process.env.PERF_TEST_AUTH_TOKEN;
 
 if (!authToken) {
