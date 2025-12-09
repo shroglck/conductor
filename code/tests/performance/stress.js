@@ -1,44 +1,48 @@
+import autocannon from "autocannon";
+import fs from "fs";
+import path from "path";
 
-import autocannon from 'autocannon';
-import fs from 'fs';
-import path from 'path';
-
-const BASE_URL = process.env.PERF_TEST_URL || 'http://monkeyschool.indresh.me';
+const BASE_URL = process.env.PERF_TEST_URL || "http://monkeyschool.indresh.me";
 const AUTH_TOKEN = process.env.PERF_TEST_AUTH_TOKEN;
 
 // Default token if env var is missing
-const DEFAULT_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtaXh0d3N6bzAwMThsODAxM2FmdXRnbXIiLCJlbWFpbCI6InNoZ3JvdmVyQHVjc2QuZWR1IiwibmFtZSI6IlNocmVzdGggR3JvdmVyIiwiaWF0IjoxNzY1MjM5NDg4LCJleHAiOjE3NjU4NDQyODh9.jP2QrtiblQNjcd-7eiUe-nqV6zFdhjn3cEkDscvgPyI';
+const DEFAULT_TOKEN =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtaXh0d3N6bzAwMThsODAxM2FmdXRnbXIiLCJlbWFpbCI6InNoZ3JvdmVyQHVjc2QuZWR1IiwibmFtZSI6IlNocmVzdGggR3JvdmVyIiwiaWF0IjoxNzY1MjM5NDg4LCJleHAiOjE3NjU4NDQyODh9.jP2QrtiblQNjcd-7eiUe-nqV6zFdhjn3cEkDscvgPyI";
 
 const token = AUTH_TOKEN || DEFAULT_TOKEN;
 
-console.log(`Starting stress test against ${BASE_URL} with 1000 concurrent connections...`);
+console.log(
+  `Starting stress test against ${BASE_URL} with 1000 concurrent connections...`,
+);
 
-const instance = autocannon({
-  url: BASE_URL,
-  connections: 1000, // 1000 concurrent connections
-  duration: 20, // 20 seconds
-  headers: {
-    'Cookie': `auth_token=${token}`
-  },
-  requests: [
-    {
-      method: 'GET',
-      path: '/' // Targeting the home page
+const instance = autocannon(
+  {
+    url: BASE_URL,
+    connections: 1000, // 1000 concurrent connections
+    duration: 20, // 20 seconds
+    headers: {
+      Cookie: `auth_token=${token}`,
     },
-     {
-      method: 'GET',
-      path: '/courses/list' // Also hitting another page to simulate some mix
+    requests: [
+      {
+        method: "GET",
+        path: "/", // Targeting the home page
+      },
+      {
+        method: "GET",
+        path: "/courses/list", // Also hitting another page to simulate some mix
+      },
+    ],
+  },
+  (err, result) => {
+    if (err) {
+      console.error("Error running stress test:", err);
+      process.exit(1);
     }
-  ]
-}, (err, result) => {
-  if (err) {
-    console.error('Error running stress test:', err);
-    process.exit(1);
-  }
 
-  const reportPath = path.resolve('performance.md');
+    const reportPath = path.resolve("performance.md");
 
-  const markdownContent = `
+    const markdownContent = `
 ## Stress Test Results
 
 **Target:** ${BASE_URL}
@@ -63,12 +67,13 @@ const instance = autocannon({
 `;
 
     fs.appendFile(reportPath, markdownContent, (writeErr) => {
-        if (writeErr) {
-            console.error('Error writing report:', writeErr);
-        } else {
-            console.log(`Stress test results written to ${reportPath}`);
-        }
+      if (writeErr) {
+        console.error("Error writing report:", writeErr);
+      } else {
+        console.log(`Stress test results written to ${reportPath}`);
+      }
     });
-});
+  },
+);
 
-autocannon.track(instance, {renderProgressBar: true});
+autocannon.track(instance, { renderProgressBar: true });
