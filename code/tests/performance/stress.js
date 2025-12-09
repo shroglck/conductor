@@ -5,11 +5,12 @@ import path from "path";
 const BASE_URL = process.env.PERF_TEST_URL || "http://monkeyschool.indresh.me";
 const AUTH_TOKEN = process.env.PERF_TEST_AUTH_TOKEN;
 
-// Default token if env var is missing
-const DEFAULT_TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtaXh0d3N6bzAwMThsODAxM2FmdXRnbXIiLCJlbWFpbCI6InNoZ3JvdmVyQHVjc2QuZWR1IiwibmFtZSI6IlNocmVzdGggR3JvdmVyIiwiaWF0IjoxNzY1MjM5NDg4LCJleHAiOjE3NjU4NDQyODh9.jP2QrtiblQNjcd-7eiUe-nqV6zFdhjn3cEkDscvgPyI";
+if (!AUTH_TOKEN) {
+  console.error("Error: PERF_TEST_AUTH_TOKEN environment variable is required.");
+  process.exit(1);
+}
 
-const token = AUTH_TOKEN || DEFAULT_TOKEN;
+const token = AUTH_TOKEN;
 
 console.log(
   `Starting stress test against ${BASE_URL} with 1000 concurrent connections...`,
