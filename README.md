@@ -1,10 +1,10 @@
 # MonkeySchool
 
 ```
- __  __                    _               _  _    ___            _                         _   
-|  \/  |   ___    _ _     | |__    ___    | || |  / __|    __    | |_      ___     ___     | |  
-| |\/| |  / _ \  | ' \    | / /   / -_)    \_, |  \__ \   / _|   | ' \    / _ \   / _ \    | |  
-|_|__|_|  \___/  |_||_|   |_\_\   \___|   _|__/   |___/   \__|_  |_||_|   \___/   \___/   _|_|_ 
+ __  __                    _               _  _    ___            _                         _
+|  \/  |   ___    _ _     | |__    ___    | || |  / __|    __    | |_      ___     ___     | |
+| |\/| |  / _ \  | ' \    | / /   / -_)    \_, |  \__ \   / _|   | ' \    / _ \   / _ \    | |
+|_|__|_|  \___/  |_||_|   |_\_\   \___|   _|__/   |___/   \__|_  |_||_|   \___/   \___/   _|_|_
 _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_| """"|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|
 "`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'
 ```
@@ -123,6 +123,31 @@ Run all tests with coverage:
 ```bash
 npm test
 ```
+
+#### Performance Testing
+
+We support RAIL performance testing and Stress testing.
+
+1.  **Configure Environment**:
+    Create a `.env` file (or set variables) with:
+    ```bash
+    PERF_TEST_URL=http://monkeyschool.indresh.me
+    PERF_TEST_AUTH_TOKEN=<your_jwt_token>
+    ```
+
+2.  **Run RAIL Tests** (Playwright):
+    Measures navigation performance for key pages.
+    ```bash
+    cd code && npm run test:perf:rail
+    ```
+
+3.  **Run Stress Tests** (Autocannon):
+    Simulates 1000 concurrent users.
+    ```bash
+    cd code && npm run test:perf:stress
+    ```
+
+    The results will be appended to `code/performance.md`.
 
 ## Project Structure
 
